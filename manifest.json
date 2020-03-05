@@ -1,0 +1,13 @@
+{
+  "name": "Boba-locator",
+  "version": "1.0",
+  "description": "Build an Extension!",
+  "permissions": ["activeTab"],
+  "browser_action": {
+    "default_popup": "index.html",
+    "default_title": "Boba Locator"
+  },
+  "options_page": "options.html",
+  "content_security_policy":"script-src 'self' https://maps.googleapis.com; object-src 'self'",
+  "manifest_version": 2 
+}
