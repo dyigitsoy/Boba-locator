@@ -2,33 +2,66 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-'use strict';
+let locationFromInput;
+let resultsDiv = document.getElementById('results');
+
+/*
+* Boba fetching
+*/
+
+function bobaCallback(results, status) {
+  if (status == google.maps.places.PlacesServiceStatus.OK) {
+   // console.log(results)
+    for (var i = 0; i < results.length; i++) {
+      resultsDiv.insertAdjacentHTML('beforeend', `
+        <p>
+          ${results[i].name} - ${results[i].formatted_address}
+          <br/>
+          <img src="boba.png" width="50" />
+        </p>
+      `)
+    }
+  }
+}
+
+function getBoba() {
+    map = new google.maps.Map(document.getElementById('map'), {
+    center: locationFromInput,
+    zoom: 15
+  });
+  
+  var bobaRequest = {
+    location: locationFromInput,
+    radius: 1000, // meters
+    query: ['boba tea']
+  }
+
+  service = new google.maps.places.PlacesService(map);
+  service.textSearch(bobaRequest, bobaCallback);  
+}
+
+document.getElementById('bobaButton').addEventListener('click', getBoba);
+
+/*
+* Location finder
+*/
+
 function initAutocomplete() {
   // Create the search box and link it to the UI element.
-  var input = document.getElementById('location');
-  var searchBox = new google.maps.places.SearchBox(input);
+  let input = document.getElementById('location');
+  let searchBox = new google.maps.places.SearchBox(input);
 
-  var markers = [];
+  let markers = [];
   // Listen for the event fired when the user selects a prediction and retrieve
   // more details for that place.
   searchBox.addListener('places_changed', function() {
-    var places = searchBox.getPlaces();
-
+    let places = searchBox.getPlaces();
     if (places.length == 0) {
+      alert('Could not find that address!')
       return;
     }
 
-    //console.log(places);
+    locationFromInput = places[0].geometry.location;
 
-    // For each place, get the icon, name and location.
-    places.forEach(function(place) {
-      if (!place.geometry) {
-        console.log("Returned place contains no geometry");
-        return;
-      }
-
-      console.log(place);
-
-    });
   });
 }
